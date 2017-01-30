@@ -1,11 +1,10 @@
 import urllib
 import re
 
-GOOGLE_FINANCE_BASE_URL = 'http://www.google.com/finance'
-# GOOGLE_FINANCE_BASE_URL = 'http://106.187.39.173/gf/'
+# GOOGLE_FINANCE_BASE_URL = 'http://www.google.com/finance'
+GOOGLE_FINANCE_BASE_URL = 'http://106.187.39.173/gf/'
 
 REALTIME_INFO_KV_PATTERN = re.compile('^,?"(.*)"\s*:\s*"(.*)"')
-REALTIME_INFO_FLOAT_KEYS = ('l', 'l_cur', 'l_fix', 'c', 'cp_fix', 'c_fix', 's', 'pcls_fix', 'cp')
 
 def getQuotes(s):
 	url = GOOGLE_FINANCE_BASE_URL+'?q=%s' % s
@@ -24,12 +23,14 @@ def getRealtimeInfo(s):
 			info[k] = v
 
 	info['id'] = int(info['id'])
-
-	for k in REALTIME_INFO_FLOAT_KEYS:
+	for k, v in info.items():
+		if k == 'id': continue 
 		try:
-			info[k] = float(info[k])
+			v = float(v)
 		except:
 			pass
+
+		info[k] = v
 
 	return info
 
@@ -40,6 +41,7 @@ def readUrl(url):
 	return data
 
 if __name__ == '__main__':
-	print getRealtimeInfo('SPY')
-	print getQuotes('SPY')
+	for k, v in getRealtimeInfo('SPY').iteritems():
+		print '\t', k, '=', v
+	# print getQuotes('SPY')
 
